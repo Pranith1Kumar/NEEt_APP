@@ -1,15 +1,24 @@
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
-import json, sqlite3, requests
+import json, sqlite3, requests, os
 
 app = Flask(__name__)
 CORS(app)
 
-# DB init
-conn = sqlite3.connect('data.db', check_same_thread=False)
+# === DB Setup ===
+HOME_DIR = os.path.expanduser("~")
+DB_PATH = os.path.join(HOME_DIR, "data.db")
+
+# Create an empty DB file if it doesn't exist
+if not os.path.exists(DB_PATH):
+    open(DB_PATH, 'a').close()
+
+conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute('''CREATE TABLE IF NOT EXISTS users (name TEXT, email TEXT, phone TEXT)''')
 conn.commit()
+
+# === Routes ===
 
 @app.route('/')
 def index():
@@ -21,7 +30,7 @@ def predict():
     name, email, phone = data["name"], data["email"], data["phone"]
     rank, category, quota = int(data["rank"]), data["category"].upper(), data["quota"]
 
-    # Store user
+    # Store user data
     cursor.execute("INSERT INTO users (name, email, phone) VALUES (?, ?, ?)", (name, email, phone))
     conn.commit()
 
