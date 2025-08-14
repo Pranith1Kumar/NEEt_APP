@@ -25,7 +25,7 @@ jobs:
 
       - name: Run tests
         run: |
-          if [ -d tests ]; then pytest -q; else echo "No tests directory, skipping."; fi
+          if [ -d tests ]; then PYTHONPATH=$(pwd) pytest -q; else echo "No tests directory, skipping."; fi
 
       # Docker build & push
       - name: Set up Docker Buildx
