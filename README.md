@@ -11,7 +11,7 @@ This project helps NEET aspirants find eligible colleges and courses based on th
 
 ### 1. Backend
 ```bash
-cd backend
-pip install -r requirements.txt
-python app.py
+cd NEET Pred
+run python app.py
+open the IP Address on new browser
 
