@@ -11,9 +11,6 @@ cursor = conn.cursor()
 cursor.execute('''CREATE TABLE IF NOT EXISTS users (name TEXT, email TEXT, phone TEXT)''')
 conn.commit()
 
-# reCAPTCHA secret
-RECAPTCHA_SECRET = "6LdLrmgrAAAAABKdMPEZm1YUKpkEhiiUhxyibsul"
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -23,14 +20,6 @@ def predict():
     data = request.json
     name, email, phone = data["name"], data["email"], data["phone"]
     rank, category, quota = int(data["rank"]), data["category"].upper(), data["quota"]
-
-    # Verify reCAPTCHA
-    resp = requests.post("https://www.google.com/recaptcha/api/siteverify", data={
-        'secret': RECAPTCHA_SECRET,
-        'response': data["recaptchaToken"]
-    }).json()
-    if not resp.get("success"):
-        return jsonify({"error": "reCAPTCHA failed"}), 400
 
     # Store user
     cursor.execute("INSERT INTO users (name, email, phone) VALUES (?, ?, ?)", (name, email, phone))
